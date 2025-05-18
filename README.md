@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI-powered Service Business Automation Platform
+
+This platform provides an intelligent automation solution for service businesses, leveraging AI agents to handle customer service, scheduling, billing, and document management tasks.
+
+## Features
+
+- **Multi-Agent Architecture**: Specialized AI agents for different business functions
+- **Workflow Orchestration**: Create and manage complex business workflows
+- **Dashboard Interface**: Monitor and control the automation system
+- **API-First Design**: Extensible API for integration with other systems
+
+## Agent Types
+
+- **Customer Service Agent**: Handles customer inquiries, complaints, and feedback
+- **Scheduling Agent**: Manages appointments, availability, and reminders
+- **Billing Agent**: Processes invoices, payments, and financial reporting
+- **Document Agent**: Generates and analyzes documents and contracts
+- **Workflow Orchestrator**: Coordinates tasks between specialized agents
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the platform. You'll be automatically redirected to the dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The platform is built on a modular architecture:
 
-## Learn More
+1. **Core Agent Framework**: Defines the base agent interfaces and communication system
+2. **Specialized Agents**: Implements domain-specific functionality
+3. **Workflow Engine**: Orchestrates complex business processes
+4. **API Layer**: Provides RESTful endpoints for agent and workflow management
+5. **Dashboard UI**: Offers a user-friendly interface for monitoring and control
 
-To learn more about Next.js, take a look at the following resources:
+## Creating Workflows
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Workflows can be created through the dashboard interface or via the API. A workflow consists of a series of steps, each assigned to a specific agent type with defined dependencies between steps.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Example workflow for client onboarding:
 
-## Deploy on Vercel
+1. Customer Service Agent: Collect client information
+2. Document Agent: Generate service agreement
+3. Billing Agent: Set up payment information
+4. Scheduling Agent: Book initial consultation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The project uses Next.js with TypeScript and follows a modular architecture. Key directories:
+
+- `/src/lib/agents`: Core agent framework and specialized agents
+- `/src/lib/db`: Database schema and models
+- `/src/app/api`: API routes for agents, workflows, and tasks
+- `/src/app/dashboard`: Dashboard UI components
+
+## License
+
+This project is proprietary and confidential.

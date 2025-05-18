@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model TeamMember {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  role      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  tasks     Task[]
+}
+
+model Client {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  phone     String?
+  address   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  leads     Lead[]
+  proposals Proposal[]
+}
+
+model Lead {
+  id          String    @id @default(uuid())
+  source      String?
+  status      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  clientId    String?
+  client      Client?   @relation(fields: [clientId], references: [id])
+  proposals   Proposal[]
+}
+
+model Proposal {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  status      String
+  amount      Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  leadId      String?
+  lead        Lead?     @relation(fields: [leadId], references: [id])
+  clientId    String?
+  client      Client?   @relation(fields: [clientId], references: [id])
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  status      String
+  priority    Int       @default(0)
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  assignedToId String?
+  assignedTo  TeamMember? @relation(fields: [assignedToId], references: [id])
+}
+
+model Feedback {
+  id          String    @id @default(uuid())
+  content     String
+  sentiment   String?
+  keyConcern  String?
+  action      String?
+  upsellOpportunity String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  clientId    String?
+  client      Client?   @relation(fields: [clientId], references: [id])
+}
