@@ -21,10 +21,10 @@ export default function WorkflowEditor() {
       name: string
       agentType: AgentType
       action: string
-      config: Record<string, any>
+      config: Record<string, string>
       dependsOn: string[]
     }>
-    data: Record<string, any>
+    data: Record<string, string>
   }>({
     name: '',
     description: '',
@@ -36,10 +36,9 @@ export default function WorkflowEditor() {
     name: string
     agentType: AgentType
     action: string
-    config: Record<string, any>
+    config: Record<string, string>
     dependsOn: string[]
   } | null>(null)
-  const [agents, setAgents] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
 
@@ -50,8 +49,7 @@ export default function WorkflowEditor() {
         setLoading(true)
         const response = await fetch('/api/agents')
         if (!response.ok) throw new Error('Failed to fetch agents')
-        const data = await response.json()
-        setAgents(data.agents || [])
+        await response.json()
       } catch (err) {
         setError(
           err instanceof Error
@@ -156,7 +154,7 @@ export default function WorkflowEditor() {
 
       if (!response.ok) throw new Error('Failed to save workflow')
 
-      const savedWorkflow = await response.json()
+      await response.json()
       router.push('/dashboard?tab=workflows')
     } catch (err) {
       setError(

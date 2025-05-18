@@ -5,10 +5,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { AgentType } from '@/lib/agents'
-import { createSpecializedAgent } from '@/lib/agents/specialized'
-import { createWorkflowOrchestrator } from '@/lib/agents/workflow'
-import { v4 as uuidv4 } from 'uuid'
 
 // In-memory store for agents (would be replaced with database in production)
 const agents = new Map()
@@ -18,8 +14,11 @@ export async function GET() {
   try {
     const agentList = Array.from(agents.values())
     return NextResponse.json({ agents: agentList })
-  } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 })
+  } catch {
+    return NextResponse.json(
+      { error: 'Failed to fetch agents' },
+      { status: 500 }
+    )
   }
 }
 
@@ -27,91 +26,40 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { type, name, description, capabilities } = body
-
-    if (!type || !Object.values(AgentType).includes(type as AgentType)) {
-      return NextResponse.json({ error: 'Invalid agent type' }, { status: 400 })
+    const id = crypto.randomUUID()
+    const agent = {
+      id,
+      type: body.type,
+      name: body.name,
+      description: body.description,
+      status: 'IDLE',
     }
-
-    const id = uuidv4()
-    let agent
-
-    if (type === AgentType.WORKFLOW) {
-      agent = createWorkflowOrchestrator({
-        id,
-        name: name || 'Workflow Orchestrator',
-        description:
-          description || 'Coordinates tasks between specialized agents',
-      })
-    } else {
-      agent = createSpecializedAgent(type as AgentType, {
-        id,
-        name: name || `${type} Agent`,
-        description: description || `Specialized ${type} agent`,
-      })
-    }
-
-    await agent.initialize()
     agents.set(id, agent)
-
+    return NextResponse.json(agent, { status: 201 })
+  } catch {
     return NextResponse.json(
-      {
-        id: agent.id,
-        type: agent.type,
-        name: agent.name,
-        description: agent.description,
-        capabilities: agent.capabilities,
-        status: agent.getStatus(),
-      },
-      { status: 201 }
+      { error: 'Failed to create agent' },
+      { status: 500 }
     )
-  } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 })
-  }
-}
-
-// GET /api/agents/:id - Get a specific agent
-export async function GET_AGENT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const agent = agents.get(params.id)
-
-    if (!agent) {
-      return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
-    }
-
-    return NextResponse.json({
-      id: agent.id,
-      type: agent.type,
-      name: agent.name,
-      description: agent.description,
-      capabilities: agent.capabilities,
-      status: agent.getStatus(),
-    })
-  } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 })
   }
 }
 
 // DELETE /api/agents/:id - Delete an agent
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest) {
   try {
-    const url = new URL(request.url)
-    const id = url.pathname.split('/').pop()
-
-    if (!id || !agents.has(id)) {
-      return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
+    const id = request.nextUrl.searchParams.get('id')
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Agent ID is required' },
+        { status: 400 }
+      )
     }
-
     agents.delete(id)
-
     return NextResponse.json({ success: true })
-  } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 })
+  } catch {
+    return NextResponse.json(
+      { error: 'Failed to delete agent' },
+      { status: 500 }
+    )
   }
 }
